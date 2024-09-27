@@ -1,0 +1,411 @@
+P.26
+Get-AzRoleDefinition “OwnerExceptNetwork” I CovertTo-JSON I 
+
+P.27
+Get-AzRoleDefinition “OwnerExceptNetwork” I CovertTo-JSON I Out-File ./roleTemplate.json
+
+New-AzRoleDefinition - InputFile ./roleTemplate.json
+
+P.115
+Perf
+I where Computer == “VM1” and CounterName == “Disk Writes/sec”
+
+P.139
+Remove-AzResourceGroup -Name RGroup1
+
+az group delete —name Rgroup1
+
+P.202
+{Get-AzStorageAccount  -IncludeGeoReplicationStats  -ResourceGroupName
+RGroup1 -name systematicsg) .GeoReplicationStats. LastSyncTime
+
+P.234
+Convert-VHD -Path c:\ test \ testvhd.vhdx
+                       -DestinationPath c:\test\testvhd.vhd
+                       -VHDType Fixed
+
+P.254
+$KVRGname = ‘RGroup1’;
+$VMRGname = ‘RGroup1’; 
+$vmName = ‘SecureVM’;
+$KeyVaultName = ‘systematic365AeKeyvault’;
+$KeyVault = Get-AzKeyvault -VaultName $KeyvaultName -ResourceGroupName $KVRGname;
+$diskEncryptionKeyVaultUrl = $Keyvault.VaultUri;
+$KeyvaultResourceId = $KeyVault.ResourceId;
+Set-AzVMDiskEncryptionExtension -ResourceGroupName $VMRGname
+            -VMName  $vmName
+            -DiskEncryptionKeyvaultUrl $diskEncryptionKeyVaultUrl
+            -DiskEncryptionKeyvaultId $KeyVaultResourceId
+            -skipVmBackup;
+
+P.255
+Get-AzVmDiskEncryptionStatus -ResourceGroupName “RGroup1” -VMName “SecureVM”
+Disable-AzVMDiskEncryption -ResourceGroupName “RGroup1” -VMName “SecureVM”
+
+P.492
+Remove-AzVirtualnetworkPeering -Name  “HK-Tokyo”  -VirtualNetworkName “RGroup2-vnet” -ResourceGroupName “RGroup2”
+
+P.524
+Nslookup -type=SOA systematic365.xyz
+
+P.566
+$cert = New-SelfSignedCertificate -Type Custom -KeySpec Signature
+-Subject “CN=P2SRootCert” -KeyExportPolicy Exportable
+-HashAlgorithm sha256 -KeyLength 2048
+-CertStoreLocation “Cert:\CurrentUser\My” -KeyUsageProperty Sign -KeyUsage CertSign
+
+P.567
+New-SelfSignedCertificate -Type Custom -DnsName P2SChildCert -KeySpec Signature
+-Subject “CN=P2SChildCert” -KeyExportPolicy Exportable
+-HashAlgorithm sha256 -KeyLength 2048
+-CertStoreLocation “Cert:\CurrentUser\My”
+-Signer $cert -TextExtension @(“2.5.29.37={text}1.3.6.1.5.5.7.3.2”)
+
+P.568
+Get-Children -Path “Cert:\CurrentUser\My”
+$cert=Get-ChildItem -Path “Cert:\CurrentUser\My\<THUMBPRINT>”
+
+P.652
+{
+“$schema”:
+“https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#”,
+“contentVersion”: “1.0.0.0”,
+“Parameters”:{
+“containerGroupName”:{
+“type” ”string”,
+“DefaultValue”:”FirstContainerGroup”,
+“metadata”:{
+“Description”: “Container Group name.”
+}
+}
+},
+“Variables”:{
+“Container1name”: ”aci-app”,
+“Container1image”: “mcr.mincrosoft.com/azuredocs/sci-helloworld:latest”,
+“Container2name”: “aci-sidecar”,
+“Container2image”: “mar.microsoft.com/azuredocs/aci-tutorial-sidecar”
+},
+“Resources”:[
+{
+“Name” : ”[parameters(‘ContainerGroupName’)]”,
+“Type”: “Microsoft.ContainerInstance/containerGroups”,
+“apiVersion”: “2018-10-01”,
+“Location”: “[resourceGroup().location]”,
+“Properties”:{
+“Containers:[
+{
+“Name”:”[variables(‘container1name’)]”,
+“Properties”:{
+“Image”:”[variables(‘container1image’)]”,
+‘resources”:{
+“Requests”:{
+“cpu”:1,
+“memoryInGb”:1.5
+}
+},
+‘Ports”:[
+{
+“Port”:80
+},
+{
+“Port”:8080
+}
+]
+}
+},
+{
+“Name”: “[variables(‘container2name’)]”,
+‘Properties”:{
+“Image”: ”[variables(‘container2image’)]”,
+“Resources”:{
+“Requests”:{
+“Cpu”: 1,
+“memeoryInGb”:1.5
+}
+}
+}
+}
+],
+“osType”:’Linux”’
+“ipAddress”:{
+“Type”:”public”,
+“Ports”:[
+{
+“Protocol”: “tcp”,
+“Port:80”
+},
+{
+“Protocol”:”tcp”,
+“Port”:8080
+}
+]
+}
+}
+}
+],
+“Outputs”:{
+“containerIPV4Address”:{
+“Type”:”string”,
+“Value”:                ‘[reference(resourceId(‘Microsoft.Containerinstance/containerGroups/‘,
+parameters(‘containerGroupName’))).ipAddress.ip]”
+}
+}
+}
+
+
+P.654
+Az deployment group create
+     —resource-group containerlab --template-file containergroupdeploy.json
+
+P.655
+Az container show
+          —resource-group containerlab --name FirstContainerGroup —output table
+
+P.656
+Az container logs
+—resource-group containerlab
+—name FirstContainerGroup —container-name aci-app
+
+Az container logs
+—resource-group containerlab
+—name FirstContainerGroup —container-name aci-sidecar
+
+P.665
+Invoke-Webrequest -Uri https://aka.ms/installazurecliwindows -Outfile .\AzureCLI.msi;
+Start-Process msiexec.exe -Wait -ArgumentList ‘/I AzureCLI.msi /quiet’;
+
+Install-WindowsFeature -Name Containers
+Restart-Computer -Force
+
+Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
+Install-Package -Name docker -ProviderName DockermsftProvider -Force -Requiredversion
+19.03
+Start-Service docker
+
+Az—version
+Docker—version
+
+P.668
+echo FROM hello world | Out-File Dockerfile
+
+az acr login —name systematicssg
+
+P.669
+docker pull hello-world
+
+Docker tag hello world systematicssg.azurecr.io/hello-world:v1
+
+P.670
+Docker push hello world systematicssg.azurecr.io/hello-world:v1
+
+Echo FROM hello-world >Dockerfile
+
+P.671
+az acr build —image sample/hello-world:v1 \
+    --registry systematicssg \
+—file Dockerfile
+
+P.672
+az acr run —registry systematicssg —cmd ‘$Registry/sample/hello world:v1’ /dev/null
+
+P.679
+kind: Pod
+apiversion: v1
+Meta data:
+Name: nginx
+Spec:
+containers:
+-name: my frontend
+ Image: nginx:1.15.12
+nodeSelector:
+“Beta.kubernetes.io/os”: linux
+
+P.681
+apiVersion: apps/v1
+Kind: Deployment
+Metadata:
+Name: nginx
+Spec:
+Replicas: 3
+Selector:
+matchLabels:
+App: nginx
+Template:
+Metadata:
+Labels:
+App: nginx
+Spec: containers:
+- name: nginx
+image: nginx: 1.15.2
+Ports:
+-  containerPort: 80
+Resources:
+Requests:
+Cpu: 250m
+Memory: 64Mi
+Limits: cpu 500m
+Memory 256mi
+
+P.683
+git clone https://github.com/Azure-samples/azure-voting-app-redis.git
+Cd azure-voting-app-redis
+
+P.684
+Docker-compose up -d
+
+Docker image list
+
+P.685
+Az login
+Az acr login —name systematicsg
+
+P.686
+Az acr list —resource-group containerlab
+     —query“ [].{acrLoginServer:loginServer}” —output table 
+
+Docker tag mcr.microsoft.com/azuredocs/azure-vote-front:v1
+systematicssg.azurecr.io/azure-vote-front:v1
+
+docker images
+
+Docker push systematicssg.azurecr.io/azure-vote-front:v1
+
+P.687
+Az acr repository list —name systematicssg —output table
+
+az acr repository show-tags —name systematicssg
+       —repository azure-vote-front —output table
+
+P.688
+ssh-keygen -f c:\containerlab\aks-ssh
+
+az aks create \
+  —resource-group containerlab \ 
+  —name sysAKSCluster \
+  —node-count 2 \
+  —node-vm-size Standard_B2s \
+  —attach-acr systematicssg
+  —ssh-key-value C:\containerlab\aks-ssh.pub
+
+P.690
+Az aks install-cli
+
+set PATH=%PATH%; “C:\Users\Larry Chan\ .azure-kubectl”
+
+az aks get-credentials —resource-group containerlab —name sysAKSCluster
+
+kubectl get nodes
+
+P.692
+Cd .\azure-voting-app-redis\
+Notepad azure-vote-all-in-one-redis.yaml
+
+kubectl apply -f azure-vote-all-in-one-redis.yaml
+
+P.693
+kubectl get service azure-vote-front —watch
+
+P.694
+kubectl scale —replicas=5 deployment/azure-vote-front
+kubectl get pods
+
+P.695
+az aks show —resource-group containerlab —name sysASKCluster —query
+kubernetesVersion —output table
+ 
+P.696
+kubectl autoscale deployment azure-vote-front —cpu-percent=50 —min=3
+—max=10
+
+apiversion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: azure-vote-back-hpa
+spec:
+maxReplicas: 10 #define max replica count
+minReplicas: 3 #define min replica count
+scaleTargetRef:
+  apiversion: apps/v1
+  kind: Deployment
+  name: azure-vote-back
+ targetCPUUtilizationPercentage: 50 # target CPU utilization
+
+—-
+
+apiVersion:autoscaling/v1
+kind:HorizontalPodAutoscaler
+metadata:
+  name: azure-vote-front-hpa
+spec:
+ maxReplicas: 10 # define max replica count
+ minReplicas: 3 # define min replica count
+ScaleTargetRef:
+  apiVersion: apps/v1
+  kind: Deployment
+  name: azure-vote-front
+targetCPUUtilizationPercentage: 50 #target CPU utilization
+
+P.697
+kubectl apply -f azure-vote-hpa.yaml
+kubectl get hpa
+
+kubectl get pods
+
+P.698
+Az aks scale  —resource-group containerlab —name sysAKSCluster
+—node-count 3
+
+P.700
+docker-compose up —build -d
+
+P.701
+docker tag
+  mcr.microsoft.com/azuredocs/azure-vote-front:v1
+  systematicssg.azurecr.io/azure-vote-front:v2
+
+dockerimage
+ 
+docker push systematicsg.azure.io/azure-vote-front:v2
+
+P.702
+kubectl get pods
+
+kubectl set image deployment azure-vote-front
+azure-vote-front=systematicsg.azurecr.io/azure-vote-front:v2
+
+kubectl get pods
+
+P.703
+Kubectl get service azure-vote-front
+
+P.704
+Az aks get-upgrades —resource-group containerlab —name sysAKSCluster
+
+P.705
+Az aks upgrade —resource-group containerlab —name sysAKSCluster
+—kubernetes-version 1.28.3
+
+P.706
+az aks show —resource-group containerlab —name sysAKSCluster —output table
+
+Az group delete —name containerlab —yes —no-wait
+Az group delete —name MC_containerlab_sysAKSCluster_japaneast —yes
+—no-wait
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
