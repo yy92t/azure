@@ -1,0 +1,162 @@
+#P.20
+$PSVersionTable.PSVersion
+
+Install-Module-Name AzureRM-AllowClobber
+
+Import-Module AzureRM
+Get-Module
+
+Install-Module -Name Az -AllowClobber
+
+Import-Module Az
+Get-Module
+
+#P.84
+SELECT Top 20pc.Name as CategoryName, p.name as ProductName
+From SalesLT.ProductCategory pc
+JOIN SalesLT.Product p
+ON pc.productcategoryid = p.productcategoryid;
+
+#P.87
+SELECT pc.Name as CategoryName, p.name as ProductName
+FROM [SalesLT] . [ProductCategory] pc
+JOIN [SalesLT] . [Product] p
+On pc.productcategoryid = p.productcategoryid;
+
+#P.88
+INSERT INTO [SalesLT] . [Product]
+([Name]
+, [ProductNumber]
+, [Color]
+, [ProductCategoryID]
+, [StandardCost]
+, [ListPrice]
+, [SellStartDate])
+
+VALUES
+(‘myNewProduct’
+, 123456789
+, ‘NewColor’
+, 1
+, 100
+, 100
+, GETDATE());
+
+SELECT * FROM [SalesLT].[Product]
+WHERE Name = ‘myNewProduct’
+
+UPDATE [SalesLT] . [Product]
+SET [ListPrice] = 125
+WHERE Name = ‘myNewProduct’;
+
+#P.89
+DELETE FROM [SalesLT] . [Product]
+WHERE Name = ‘myNewProduct’;
+
+#ALTER DATABASE[Sample]SET COMPATIBILITY_LEVEL = 150;
+
+#P.111
+SELECT @@SPID
+SELECT * FROM Employees
+BEGIN TRANSACTION
+UPDATE Employees SET DepartmentName= ‘Marketing’ WHERE FirstName-‘Tom’
+
+#P.120
+Remove-AzResourceGroup -Name $resourceGroupName
+
+#P.158
+SELECT * FROM sys.firewall_rules
+
+#P.159
+EXECUTE sp_set_firewall_rule @name= N’ExampleFirewallRule’,
+@start_ip_address = ‘172.31.0.1’, @end_ip_address = ’172.31.0.100’
+
+SELECT * FROM sys.firewall_rules
+
+EXECUTE sp_delete_firewall_rule @name = N’ExampleFirewallRule’
+
+#P.188
+CREATE INDEX IX_Department ON duo.Employees(DepartmentName)
+
+#P.192
+CREATE NONCLUSTERED INDEX IX_Department ON
+dbo.Employees(DepartmentName)
+
+#P.199
+ALTER TABLE dbo.EmployeesOrder
+DROP CONSTRAINT FK_EmployeesOrder_Employees
+ALTER TABLE dbo.Employees DROP CONSTRAINT PK_Employees
+
+DROP INDEX dbo.Employees.IX_Department
+CREATE CLUSTERED INDEX IX_DepartmentName
+ON dbo.Employees (DepartmentName)
+
+#P.200
+DROP INDEX dbo.Employees.IX_DepartmentName
+ALTER TABLE duo.Employees ADD CONSTRAINT PK_Employees PRIMARY KEY CLUSTERED(EmployeeID)
+ALTER TABLE duo.EmployeesOrder ADD CONSTRAINT FK_EmployeesOrder_Employees
+FOREIGN KEY (EmployeeID) REFERENCES dbo.Employees (EmployeeID)
+CREATE NONCLUSTERED INDEX IX_Department ON dbo.Employees (DepartmentName)
+
+#P.224
+{
+“id”:”1”,
+“category”: “personal”,
+“name”: “groceries”,
+“description”:”Pick up apples and strawberries.”,
+“isComplete”:false
+}
+
+#P.229
+SELECT * FROM Families f
+WHERE f.id = “AndersonFamily”
+
+#P.230
+SELECT {“Name”:f.id, “City”:f.address.city} AS Family
+FROM Families f
+WHERE f.address.city = f.address.state
+
+#P.231
+SELECT c.givenName
+FROM Families f
+JOIN c IN f.children
+WHERE f.id = “WakefieldFamily
+ORDER BY f.address.city ASC
+
+#P.232
+SELECT [f.address.city, f.address.state] AS CityState
+FROM Families f
+
+#P.233
+SELECT f.id, ARRAY(SELECT DISTINCT VALUE c.givenName FROM c IN f.children) as ChildNames
+FROM f
+
+SELECT * FROM Families.children
+
+#P.247
+$resourcesGroupName = “datagroup1”
+$accountName = “systematicjp”
+$locations = @(“East Asia”, “West US”, “Australia Southeast”, “Japan East”)
+Update-AzCosmosDBAccountFailoverPriority
+-ResourcesGroupName $resourceGroupName
+-Name $accountName
+-FailoverPolicy $locations
+
+#P.248
+Install-Module -Name az.CosmosDB
+
+$resourceGroupName = “datagroup1”
+$accountName = “systematicjp”
+$locations = @(“Japan East”, “East Asia”, “West US”, “Australia East”
+
+Update-AzCosmosDBAccountFailoverPriority -Resource =GroupName $resourceGroupName -Name$accountName -FailoverPolicy $locations
+
+
+#P.249
+$resourceGroupName = “datagroup1”
+$accountName = “systematicjp”
+$location = @(“Japan East”)
+$locationObject=@{locationName = “$location”; failoverPriority = 0}
+Update-AzCosmosDBAccountRegion -ResourceGroupName $resourceGroupName -Name $accountName
+-LocationObject $locationObjects
+
